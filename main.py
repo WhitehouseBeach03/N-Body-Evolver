@@ -7,11 +7,28 @@ from Body import *
 
 import matplotlib.pyplot as plt
 
+#4-Body symetical system
 def t1():
+    #system=[]
     q = Body(10, [250, 100, 0], [0.04, 0, 0] )
     w = Body(15, [100, 250, 0], [0, -0.02, 0])
     e = Body(10, [250, 400, 0], [-0.04, 0, 0])
     e = Body(15, [400, 250, 0], [0, 0.02, 0])
+
+def t2():
+    #Body.initializeSystem(0.025)
+    Body(40, [250, 200], [0.06, 0], 5)
+    Body(40, [250, 300], [-0.06, 0], 5)
+
+#Orbit 2d
+def t3():
+    Body(400, [250, 250], [0.03, 0], 50)
+    Body(40, [250, 150], [-0.3, 0], 5)
+
+#Orbit 3d
+def t4():
+    Body(400, [250, 250, 0], [0, 0, 0.03], 50)
+    Body(40, [250, 150, 0], [0, 0, -0.3], 5)
 
 #print(Body.conserved())
 
@@ -46,6 +63,7 @@ def draw2D(syst):
     pygame.quit()
 
 def plot2D(syst, steps):
+    syst()
     positions = []
     for body in system:
         positions.append( [ [body.pos[0]] , [body.pos[1]] ] )
@@ -56,17 +74,23 @@ def plot2D(syst, steps):
             B = system[bodynum]
             positions[bodynum][0].append(B.pos[0])
             positions[bodynum][1].append(B.pos[1])
-
+            
     for bodynum in range(len(system)):
         bodyXPlot = positions[bodynum][0]
         bodyYPlot = positions[bodynum][1]
         plt.plot(bodyXPlot, bodyYPlot)
 
     plt.show()
-    print("done")
-    
-    
-plot2D(t1,10)
 
+draw2D(t1)
+#system = []
+#plot2D(t1, 10000)
+
+def r():
+    q = [1,2,3]
+    w = [4,5,6]
+    plt.plot(q,w)
+    plt.plot(w,q)
+    plt.show()
 
 #pygame.time.get_ticks()%

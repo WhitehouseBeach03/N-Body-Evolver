@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-
+system = []
 
 class Body:
 
@@ -14,9 +14,17 @@ class Body:
 
         self.mass = mass
         self.radius = radius
+
+        if len(pos)<3 :
+            pos.append(0)
+        if len(vel)<3 :
+            vel.append(0)
+        #print(sel
+        
         self.pos = np.array(pos)
         self.vel  = np.array(vel)
         self.acc = np.array([0, 0, 0])
+        
         system.append(self)
 
     def __str__(self):
@@ -36,7 +44,6 @@ class Body:
 
     @staticmethod
     def initializeSystem(gravConst):
-        global system
         global G
         system = []
         G = gravConst
@@ -58,6 +65,7 @@ class Body:
                 else:
                     #newAcc = rVec * ( G * body2.mass / body2.radius**3 )
                     newAcc = np.array([0,0,0])
+                    #print("intersect")
                 body1.acc = body1.acc + newAcc
 
         #Update vel and pos vectors
@@ -73,5 +81,5 @@ class Body:
         PMag = np.linalg.norm(totalP)
         return f"Total momentum is {totalP},  Magnitutde {PMag}"
 
-Body.initializeSystem(0.03)
+Body.initializeSystem(0.025)
 
