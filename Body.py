@@ -60,12 +60,10 @@ class Body:
                 rVec = body2.pos - body1.pos
                 rMag = np.linalg.norm( rVec )
 
+                newAcc = [0, 0, 0]
                 if  rMag >=  body2.radius+ body1.radius :
                     newAcc = rVec * ( G*body2.mass ) / (rMag**3)
-                else:
-                    #newAcc = rVec * ( G * body2.mass / body2.radius**3 )
-                    newAcc = np.array([0,0,0])
-                    #print("intersect")
+   
                 body1.acc = body1.acc + newAcc
 
         #Update vel and pos vectors
@@ -81,5 +79,5 @@ class Body:
         PMag = np.linalg.norm(totalP)
         return f"Total momentum is {totalP},  Magnitutde {PMag}"
 
-Body.initializeSystem(0.025)
+Body.initializeSystem(0.03)
 
