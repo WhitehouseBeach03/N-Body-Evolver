@@ -1,27 +1,44 @@
 #N-Body Simulator, Edward Spence 13/11/24
 
-#imports external libraries
 import contextlib
 with contextlib.redirect_stdout(None):
     import pygame
-import matplotlib.pyplot as plt
-from astropy.coordinates import get_body_barycentric_posvel
-from astropy.time import Time
-
-#imports other project files
 from Body import *
 
-#Test astro data
-t = Time("2019-11-27 17:00:00.0", scale="tdb")
-pos, vel = get_body_barycentric_posvel("sun", t, ephemeris="jpl")
+import matplotlib.pyplot as plt
 
+#import astro modules
+from astroquery.jplhorizons import Horizons
+from astropy.time import Time
+planetMasses = 1e24 * np.array([0.330, 4.87, 5.97, 0.642, 1898, 568, 86.8, 102])
+t = Time("2019-11-27 17:00:00.0", scale="tdb")
+objMerc = Horizons(id=1, location="@sun", epochs=t.jd, id_type='id').vectors()
+
+def makePlanet(num):
+    obj = Horizons(id=num, location="@sun", epochs=t.jd, id_type='id').vectors()
+    pos = []
+    for i in ['x','y','z']:
+        pos.append( obj[i] )
+    vel = []
+    for i in ['vx','vy','vz']:
+        vel.append( obj[i] )
+    PLANET = Body( planetMasses[num-1], pos, vel, autoAdd=False)
+    return PLANET
+
+def solarSystem():
+    Body.initializeSystem(6.6743e-11)
+    for i in range(1,9):
+        PLANET = makePlanet(i)
+        system.append( PLANET )
+
+#A series of functions defining different systems
 #4-Body symetical system
 def t1():
     #system=[]
-    Body(10, [250, 100, 0], [0.02, 0, 0] )
-    Body(10, [100, 250, 0], [0, -0.02, 0])
-    Body(10, [250, 400, 0], [-0.02, 0, 0])
-    Body(10, [400, 250, 0], [0, 0.02, 0])
+    q = Body(10, [250, 100, 0], [0.04, 0, 0] )
+    w = Body(15, [100, 250, 0], [0, -0.02, 0])
+    e = Body(10, [250, 400, 0], [-0.04, 0, 0])
+    e = Body(15, [400, 250, 0], [0, 0.02, 0])
 
 def t2():
     #Body.initializeSystem(0.025)
@@ -38,57 +55,38 @@ def t4():
     Body(400, [250, 250, 0], [0, 0, 0.03], 50)
     Body(40, [250, 150, 0], [0, 0, -0.3], 5)
 
-#Through the earth
-def t5():
-      Body(10, [250, 100], [0, 0], 10)
-      Body(200, [250,250], [0,0], 50)
 
-
-
-#Displays the bodies in motion using pygame
+#Displays the bodies in motion
 def draw2D(syst):
 
-    #initiates the system of bodies
     syst()
-
-    #initiates the pygame window
+    
     pygame.init()
     screen = pygame.display.set_mode((500, 500))
     running = True
     screen.fill("purple")
-
-    #runs the simulation untill it is closed
+    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-        #tests if important quantities are conserved: momentum
         if(pygame.time.get_ticks()%1000==0):
             print(Body.conserved())
             #print('lol')
             
         screen.fill(pygame.Color(255,0,255,255))
 
-        #draws each body in the system to the screen
         for body in system:
             pos2D = body.pos[0:2]
             pygame.draw.circle( screen, pygame.Color(255, 200, 100), pos2D, body.radius )
 
-        #evolves the system
         Body.evolve()
-        
         pygame.display.flip()
-    #closes the pygame window
+        
     pygame.quit()
 
-
-#draw2D(t5)
-
-
-#pygame.time.get_ticks()%
-
-'''
+#Plots body positions over time
 def plot2D(syst, steps):
     syst()
     positions = []
@@ -108,4 +106,5 @@ def plot2D(syst, steps):
         plt.plot(bodyXPlot, bodyYPlot)
 
     plt.show()
-'''
+
+#draw2D(t3)

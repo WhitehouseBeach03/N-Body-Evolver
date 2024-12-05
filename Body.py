@@ -10,7 +10,7 @@ class Body:
 
     """
 
-    def __init__(self, mass, pos, vel, radius=10):
+    def __init__(self, mass, pos, vel, radius=10, autoAdd=True):
 
         self.mass = mass
         self.radius = radius
@@ -19,12 +19,15 @@ class Body:
             pos.append(0)
         if len(vel)<3 :
             vel.append(0)
-        #print(sel
         
         self.pos = np.array(pos)
         self.vel  = np.array(vel)
         self.acc = np.array([0, 0, 0])
-        
+
+        if autoAdd :
+            self.add()
+
+    def add(self):
         system.append(self)
 
     def __str__(self):
@@ -60,10 +63,12 @@ class Body:
                 rVec = body2.pos - body1.pos
                 rMag = np.linalg.norm( rVec )
 
-                newAcc = [0, 0, 0]
                 if  rMag >=  body2.radius+ body1.radius :
                     newAcc = rVec * ( G*body2.mass ) / (rMag**3)
-   
+                else:
+                    #newAcc = rVec * ( G * body2.mass / body2.radius**3 )
+                    newAcc = np.array([0,0,0])
+                    #print("intersect")
                 body1.acc = body1.acc + newAcc
 
         #Update vel and pos vectors
@@ -79,5 +84,5 @@ class Body:
         PMag = np.linalg.norm(totalP)
         return f"Total momentum is {totalP},  Magnitutde {PMag}"
 
-Body.initializeSystem(0.03)
+Body.initializeSystem(0.025)
 
